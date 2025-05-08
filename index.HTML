@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>StellaRoom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #181A20;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+    #star-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+    }
+    .stella-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 5vw;
+      color: #FFD700;
+      letter-spacing: 0.15em;
+      text-shadow:
+        0 0 40px #fff,
+        0 0 10px #FFD700,
+        0 2px 8px #000;
+      font-weight: bold;
+      z-index: 1;
+      user-select: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="star-bg"></canvas>
+  <div class="stella-title">StellaRoom</div>
+  <script>
+    // 星アニメーション
+    const canvas = document.getElementById('star-bg');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    // 星を初期化
+    function initStars() {
+      stars = [];
+      const numStars = Math.floor(window.innerWidth * window.innerHeight / 2500);
+      for(let i=0;i<numStars;i++){
+        stars.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: Math.random()*1.8+0.7,
+          o: Math.random()*0.5+0.5,
+          d: Math.random()*0.015+0.008,
+          color: Math.random()<0.5 ? "#FFD700" : "#fff"
+        });
+      }
+    }
+    window.addEventListener('resize', initStars);
+    initStars();
+    // アニメーション
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(let s of stars){
+        ctx.globalAlpha = s.o + Math.sin(Date.now()*s.d)*0.3;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,2*Math.PI);
+        ctx.fillStyle = s.color;
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
